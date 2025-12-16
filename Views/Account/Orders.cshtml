@@ -1,0 +1,157 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Đơn hàng của tôi</h2>
+            
+            <!-- Filter Tabs -->
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#all-orders" type="button">
+                        Tất cả
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pending-orders" type="button">
+                        Đang chờ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#processing-orders" type="button">
+                        Đang xử lý
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shipped-orders" type="button">
+                        Đang giao
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#completed-orders" type="button">
+                        Hoàn thành
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Orders List -->
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="all-orders" role="tabpanel">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>#1001</strong>
+                                    <br>
+                                    <small class="text-muted">15/01/2025</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/1.png" alt="Product" class="me-2" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+                                        <div>
+                                            <div class="fw-semibold">3 sản phẩm</div>
+                                            <small class="text-muted">Rocky Road, Melten Lava, Berry Puff</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <strong class="text-primary">₫350,000</strong>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <a asp-controller="Account" asp-action="OrderDetails" asp-route-id="1001" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>#1002</strong>
+                                    <br>
+                                    <small class="text-muted">14/01/2025</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/11.png" alt="Product" class="me-2" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+                                        <div>
+                                            <div class="fw-semibold">2 sản phẩm</div>
+                                            <small class="text-muted">Melten Lava, Dark Choco</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-info">Đang giao</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <strong class="text-primary">₫520,000</strong>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <a asp-controller="Account" asp-action="OrderDetails" asp-route-id="1002" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <strong>#1003</strong>
+                                    <br>
+                                    <small class="text-muted">13/01/2025</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/28.png" alt="Product" class="me-2" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+                                        <div>
+                                            <div class="fw-semibold">1 sản phẩm</div>
+                                            <small class="text-muted">Berry Puff</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="badge bg-warning">Đang chờ</span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <strong class="text-primary">₫280,000</strong>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <a asp-controller="Account" asp-action="OrderDetails" asp-route-id="1003" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tabs content (similar structure) -->
+                <div class="tab-pane fade" id="pending-orders" role="tabpanel">
+                    <p class="text-muted text-center py-5">Không có đơn hàng nào đang chờ.</p>
+                </div>
+                <div class="tab-pane fade" id="processing-orders" role="tabpanel">
+                    <p class="text-muted text-center py-5">Không có đơn hàng nào đang xử lý.</p>
+                </div>
+                <div class="tab-pane fade" id="shipped-orders" role="tabpanel">
+                    <p class="text-muted text-center py-5">Không có đơn hàng nào đang giao.</p>
+                </div>
+                <div class="tab-pane fade" id="completed-orders" role="tabpanel">
+                    <p class="text-muted text-center py-5">Không có đơn hàng nào đã hoàn thành.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

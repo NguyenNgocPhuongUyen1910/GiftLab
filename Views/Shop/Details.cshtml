@@ -1,0 +1,622 @@
+﻿@model GiftLab.Models.ProductDetailViewModel
+@{
+    // Tên file trong Views/Shop/Details.cshtml
+    ViewData["Title"] = Model.ProductInfo.Name;
+}
+
+<style>
+    /* -------------------------- */
+    /* CSS cho phần Tiêu đề */
+    /* -------------------------- */
+    .product-breadcrumb-header {
+        background-color: #fff5f8;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        width: 100vw; /* tràn theo chiều ngang màn hình */
+        margin-left: calc(50% - 50vw); /* thoát khỏi container ngoài */
+    }
+
+    .breadcrumb-text {
+        font-size: 14px;
+        color: #555;
+    }
+
+        .breadcrumb-text b {
+            color: #d70025; /* Màu chữ in đậm */
+            font-weight: bold;
+        }
+
+    /* -------------------------- */
+    /* CSS cho Nội dung chính */
+    /* -------------------------- */
+    .product-detail-container {
+        display: flex;
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .product-image-section {
+        flex: 1;
+        position: relative;
+        max-width: 50%;
+    }
+
+    .main-product-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        transition: opacity 0.3s;
+    }
+
+    /* Button Yêu thích Overlay */
+    .favorite-button-overlay {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0; /* Mặc định ẩn */
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+
+    /* Nổi lên khi hover vào vùng ảnh */
+    .product-image-section:hover .favorite-button-overlay {
+        opacity: 1;
+    }
+
+    .favorite-button-overlay img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .favorite-button-overlay.is-favorite img {
+        content: url('/images/mini-heartfill.png'); /* Cần file này trong wwwroot/images */
+    }
+
+    .favorite-button-overlay:not(.is-favorite) img {
+        content: url('/images/mini-heart.png'); /* Cần file này trong wwwroot/images */
+    }
+
+
+    .product-info-section {
+        flex: 1;
+        padding-top: 10px;
+    }
+
+    .product-category {
+        color: #fb6f92;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .product-name {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .price-group {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 20px;
+    }
+
+    .product-price {
+        font-size: 30px;
+        color: #d70025;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+    .original-price {
+        font-size: 18px;
+        color: #999;
+        text-decoration: line-through;
+    }
+
+    .product-short-description {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    /* Phân loại */
+    .variant-selection {
+        margin-bottom: 20px;
+    }
+
+        .variant-selection span {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .variant-selection button {
+            padding: 8px 15px;
+            margin: 0 10px 10px 0;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+            .variant-selection button.selected {
+                border-color: #ff8fab;
+                background-color: #ff8fab;
+                color: white;
+            }
+
+            .variant-selection button:disabled {
+                background-color: #f7f7f7;
+                color: #aaa;
+                border-style: dashed;
+                cursor: not-allowed;
+            }
+
+    /* Số lượng và Action */
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+        .quantity-controls label {
+            margin-right: 15px;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+    .quantity-input {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-right: 20px;
+    }
+
+        .quantity-input button {
+            padding: 8px 12px;
+            border: none;
+            background: #f3f3f3;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.1s;
+        }
+
+            .quantity-input button:hover {
+                background: #eee;
+            }
+
+        .quantity-input input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            outline: none;
+            padding: 8px 0;
+        }
+
+    .stock-status-text {
+        font-weight: 500;
+    }
+
+    .action-buttons button {
+        padding: 15px 35px; /* Tăng padding để nút to hơn */
+        margin-right: 15px;
+        border-radius: 50px; /* Bo góc tròn hẳn */
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 180px; /* Đảm bảo kích thước tối thiểu */
+        border: none;
+    }
+
+    /* Nút Mua Ngay (Giống MUA NGAY/Màu liền) */
+    .buy-now-btn {
+        background-color: #ff8fab; /* Màu đỏ hồng đậm */
+        color: white;
+    }
+
+        .buy-now-btn:hover {
+            background-color: #fb6f92;
+            box-shadow: 0 4px 10px rgba(251, 111, 146, 0.3);
+        }
+
+    .add-to-cart-btn {
+        background-color: #ffe5ec; /* Nền trắng */
+        color: #fb6f92; /* Màu chữ và viền đậm */
+    }
+
+        .add-to-cart-btn:hover {
+            background-color: #fff5f8;
+            box-shadow: 0 4px 10px rgba(251, 111, 146, 0.3);
+        }
+
+    /* Trạng thái bị khóa (disabled) */
+    .action-buttons button:disabled {
+        background-color: #f0f0f0;
+        color: #aaa;
+        border-color: #aaa;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="product-breadcrumb-header">
+    <div class="product-detail-container" style="margin-bottom: 0; padding-bottom: 0;">
+        <p class="breadcrumb-text">
+            @Html.Raw(Model.Breadcrumb) / <b>@Model.ProductInfo.Name</b>
+        </p>
+    </div>
+</div>
+
+<div class="product-detail-container">
+    <div class="product-image-section">
+        <img id="mainImage" src="" alt="@Model.ProductInfo.Name" class="main-product-image" />
+
+        <div id="favoriteButton" class="favorite-button-overlay @(Model.IsFavorite ? " is-favorite" : "" )" title="Thêm vào yêu thích">
+            <img src="/images/heart-outline.png" alt="Yêu thích" />
+        </div>
+    </div>
+
+    <div class="product-info-section">
+        <p class="product-category">@Model.ProductInfo.Category</p>
+        <h1 class="product-name">@Model.ProductInfo.Name</h1>
+
+        <div class="price-group">
+            <p class="product-price" id="currentPrice">0₫</p>
+            <p class="original-price" id="originalPrice"></p>
+        </div>
+
+        <p class="product-short-description">@Model.ShortDescription</p>
+
+
+        @if (Model.Variants != null && Model.Variants.Any())
+        {
+            <div class="variant-selection">
+                <span>Chọn phân loại:</span>
+                <div>
+                    @foreach (var variant in Model.Variants)
+                    {
+                        // PHẦN ĐÃ SỬA LỖI CÚ PHÁP
+                        <button type="button"
+                                            class="variant-btn @(variant.Id == Model.DefaultVariantId ? "selected" : "" )"
+                                            data-variant-id="@variant.Id"
+                                            data-price="@variant.Price"
+                                            data-original-price="@variant.OriginalPrice"
+                                            data-image-path="@Url.Content(variant.ImagePath)"
+                                            data-stock-status="@variant.StockStatus"
+                        @(variant.StockQuantity <= 0 ? "disabled" : "")
+                                            >
+                            @variant.Name
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="quantity-controls">
+            <label for="quantity">Số lượng:</label>
+            <div class="quantity-input">
+                <button type="button" onclick="changeQuantity(-1)">-</button>
+                <input type="text" id="quantity" value="1" min="1" max="99" onkeypress="return isNumberKey(event)" />
+                <button type="button" onclick="changeQuantity(1)">+</button>
+            </div>
+            <span id="stockStatusText" class="stock-status-text"></span>
+        </div>
+
+        <div class="action-buttons">
+            <button id="addToCartBtn" type="button" class="add-to-cart-btn">Thêm vào giỏ hàng</button>
+            <button id="buyNowBtn" type="button" class="buy-now-btn">Mua ngay</button>
+        </div>
+    </div>
+</div>
+
+<div class="product-detail-container" style="margin-top: 30px; margin-bottom: 50px;">
+    @{
+        // Tạo URL quay về trang Index của ShopController
+        var shopIndexUrl = Url.Action("Index", "Shop");
+    }
+    <a href="@shopIndexUrl" class="back-to-shop-link">
+        <span style="font-size: 1.2em;">&larr;</span> Quay về cửa hàng
+    </a>
+</div>
+
+<style>
+    .back-to-shop-link {
+        font-size: 16px;
+        color: #fb6f92;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+    }
+
+        .back-to-shop-link:hover {
+            color: #e53965;
+        }
+</style>
+
+<div class="product-detail-container">
+    <div class="description-section">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="description-content">MÔ TẢ</button>
+            <button class="tab-btn" data-tab="review-content">ĐÁNH GIÁ (@Model.ProductInfo.SoldCount)</button>
+        </div>
+
+        <div id="description-content" class="tab-content active">
+            @Html.Raw(Model.ProductInfo.Description)
+        </div>
+
+        <div id="review-content" class="tab-content">
+            <p>Hiện chưa có đánh giá nào cho sản phẩm này.</p>
+            <button class="review-button">Viết đánh giá của bạn</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* CSS cho phần Mô Tả và Đánh Giá */
+    .description-section {
+        width: 100%;
+        margin-top: 40px;
+    }
+
+    .tabs-header {
+        display: flex;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #888;
+        position: relative;
+        transition: color 0.2s;
+        margin-right: 20px;
+        text-transform: uppercase;
+    }
+
+        .tab-btn.active {
+            color: #fb6f92; /* Màu đỏ chủ đạo */
+        }
+
+            .tab-btn.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background-color: #fb6f92;
+            }
+
+    .tab-content {
+        display: none;
+        line-height: 1.8;
+        color: #333;
+        padding-top: 10px;
+    }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Styling cho nội dung mô tả mẫu */
+        .tab-content ul {
+            font-family: "Noto sans", sans-serif;
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+            .tab-content ul li {
+                margin-bottom: 10px;
+            }
+
+    .review-button {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-weight: 500;
+    }
+</style>
+@if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+{
+    <div class="product-detail-container" style="margin-top: 60px; margin-bottom: 80px;">
+        <div class="related-products-section">
+            <h2 class="related-title">Sản phẩm tương tự</h2>
+
+            <div class="gl-shop-grid related-grid">
+                @foreach (var p in Model.RelatedProducts)
+                {
+                    @* Tái sử dụng Partial View hiển thị card sản phẩm *@
+                    @await Html.PartialAsync("_ProductCard", p)
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+
+    .related-products-section {
+        width: 100%;
+    }
+
+    .related-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #4e4e4e;
+        position: relative;
+    }
+
+        .related-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: #fb6f92;
+            margin-top: 5px;
+        }
+
+    /* Đảm bảo grid trong trang chi tiết vẫn hiển thị 4 cột */
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* Tùy chỉnh số cột mong muốn */
+        gap: 20px;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Dữ liệu biến thể được truyền từ Server
+    var defaultVariantId = @Model.DefaultVariantId;
+
+    $(document).ready(function() {
+        // Hàm định dạng số
+        function formatCurrency(number) {
+            // Sử dụng định dạng tiền Việt Nam (VND)
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+        }
+
+        // Hàm cập nhật thông tin sản phẩm
+        function updateProductInfo(variantElement) {
+            var price = parseFloat($(variantElement).data('price'));
+            var originalPrice = parseFloat($(variantElement).data('original-price'));
+            var imagePath = $(variantElement).data('image-path');
+            var stockStatus = $(variantElement).data('stock-status');
+
+            // 1. Cập nhật hình ảnh và giá
+            $('#mainImage').attr('src', imagePath);
+            $('#currentPrice').text(formatCurrency(price));
+
+            if (originalPrice && originalPrice > price) {
+                $('#originalPrice').text(formatCurrency(originalPrice));
+            } else {
+                $('#originalPrice').text(''); // Xóa giá gốc nếu không có hoặc không có giảm giá
+            }
+
+            // 2. Cập nhật trạng thái kho hàng và trạng thái nút
+            $('#stockStatusText').text('(' + stockStatus + ')');
+            var isAvailable = stockStatus === 'Còn hàng';
+
+            if (!isAvailable) {
+                $('#stockStatusText').css('color', 'red');
+                $('#addToCartBtn, #buyNowBtn, #quantity').prop('disabled', true);
+            } else {
+                $('#stockStatusText').css('color', 'green');
+                $('#addToCartBtn, #buyNowBtn, #quantity').prop('disabled', false);
+            }
+
+            // 3. Đánh dấu nút đã chọn
+            $('.variant-btn').removeClass('selected');
+            $(variantElement).addClass('selected');
+        }
+
+        // Xử lý khi click vào phân loại sản phẩm
+        $('.variant-btn').on('click', function() {
+            if ($(this).is(':disabled')) return;
+            updateProductInfo(this);
+        });
+
+        // Xử lý button Yêu thích
+        $('#favoriteButton').on('click', function() {
+            $(this).toggleClass('is-favorite');
+            var isFavorite = $(this).hasClass('is-favorite');
+            // TODO: Gửi AJAX để lưu trạng thái yêu thích
+            console.log('Trạng thái yêu thích: ' + isFavorite);
+        });
+
+        // Xử lý button Thêm vào giỏ hàng
+        $('#addToCartBtn').on('click', function() {
+            var selectedVariantId = $('.variant-btn.selected').data('variant-id');
+            var quantity = parseInt($('#quantity').val());
+
+            if (!selectedVariantId || quantity < 1) {
+                alert('Vui lòng chọn phân loại và nhập số lượng hợp lệ.');
+                return;
+            }
+
+            // TODO: Gửi AJAX request lên Controller
+            console.log('Thêm vào giỏ hàng: Variant ID ' + selectedVariantId + ', Số lượng: ' + quantity);
+        });
+
+
+        // Khởi tạo: Chọn biến thể mặc định khi tải trang
+        var defaultVariantElement = $('.variant-btn[data-variant-id="' + defaultVariantId + '"]');
+        if (defaultVariantElement.length > 0) {
+            updateProductInfo(defaultVariantElement[0]);
+        }
+    });
+
+    // Hàm thay đổi số lượng (dùng cho onclick)
+    function changeQuantity(change) {
+        var quantityInput = $('#quantity');
+        var current = parseInt(quantityInput.val());
+        var max = parseInt(quantityInput.attr('max'));
+        var min = parseInt(quantityInput.attr('min'));
+
+        var newQuantity = current + change;
+
+        if (newQuantity < min) {
+            newQuantity = min;
+        } else if (newQuantity > max) {
+            newQuantity = max;
+        }
+
+        quantityInput.val(newQuantity);
+    }
+
+    // Chỉ cho phép nhập số (dùng cho onkeypress)
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+    $('.tab-btn').on('click', function () {
+        var targetTabId = $(this).data('tab');
+
+        // Ẩn tất cả nội dung tab
+        $('.tab-content').removeClass('active');
+
+        // Xóa trạng thái active khỏi tất cả nút
+        $('.tab-btn').removeClass('active');
+
+        // Hiển thị nội dung tab được chọn
+        $('#' + targetTabId).addClass('active');
+
+        // Đặt trạng thái active cho nút được chọn
+        $(this).addClass('active');
+    });
+
+    // Khởi tạo: Đảm bảo tab Mô Tả luôn được hiển thị mặc định
+    $('#description-content').addClass('active');
+</script>

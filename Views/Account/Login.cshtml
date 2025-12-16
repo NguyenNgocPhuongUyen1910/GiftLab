@@ -1,0 +1,268 @@
+﻿@model GiftLab.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = null; 
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+    .auth-container {
+        font-family: 'Quicksand', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #fff6fa;
+        padding: 20px;
+    }
+
+
+    .auth-card {
+        display: flex;
+        width: 1300px;
+        height: 680px;
+        max-width: 100%;
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(255, 111, 168, 0.15);
+    }
+
+    /* === CỘT TRÁI === */
+    .auth-image-side {
+        width: 50%;
+        height: 100%;
+        background-color: #ffeef5;
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Ảnh nền */
+        .auth-image-side img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.6s ease;
+        }
+
+        .auth-image-side:hover img {
+            transform: scale(1.03);
+        }
+
+    /* === CỘT PHẢI === */
+    .auth-form-side {
+        width: 40%;
+        height: 100%;
+        padding: 0 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Tiêu đề */
+    .auth-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .auth-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #f16480;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .auth-subtitle {
+        color: #666;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    /* Input */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 700;
+        color: #444;
+        font-size: 15px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        background: #fcfcfc;
+        font-size: 15px;
+        outline: none;
+        transition: 0.3s;
+        box-sizing: border-box;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+        .form-control-custom:focus {
+            border-color: #f16480;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 111, 168, 0.1);
+        }
+
+    /* Checkbox & Quên pass */
+    .auth-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+            accent-color: #f16480;
+            cursor: pointer;
+        }
+
+    .forgot-link {
+        color: #f16480;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+        .forgot-link:hover {
+            color: #f16480;
+            text-decoration: underline;
+        }
+
+    /* Nút bấm chính */
+    .btn-submit {
+        width: 100%;
+        padding: 18px;
+        background: #f16480;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 8px 20px rgba(255, 111, 168, 0.25);
+        font-family: 'Quicksand', sans-serif;
+        text-transform: uppercase;
+    }
+
+        .btn-submit:hover {
+            background: #f16480;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 111, 168, 0.35);
+        }
+
+    /* Footer */
+    .auth-footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 15px;
+        color: #666;
+    }
+
+    .register-link {
+        color: #f16480;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 5px;
+    }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+    /* Responsive mobile */
+    @@media (max-width: 992px) {
+        .auth-card {
+            flex-direction: column;
+            width: 100%;
+            height: auto;
+        }
+
+        .auth-image-side {
+            width: 100%;
+            height: 250px;
+            flex: none;
+        }
+
+        .auth-form-side {
+            width: 100%;
+            height: auto;
+            padding: 40px 20px;
+            flex: none;
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <div class="auth-image-side">
+            <img src="~/images/login-bg.png" alt="Catput Login Banner">
+        </div>
+
+        <div class="auth-form-side">
+
+            <div class="auth-header">
+                <h2 class="auth-title">Đăng nhập</h2>
+                <p class="auth-subtitle">Chào mừng bạn quay trở lại với GiftLab! 🌸</p>
+            </div>
+
+            <form asp-action="Login" method="post">
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">Địa chỉ Email</label>
+                    <input asp-for="Email" class="form-control-custom" placeholder="name@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">Mật khẩu</label>
+                    <input asp-for="Password" type="password" class="form-control-custom" placeholder="••••••••" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-me">
+                        <input asp-for="RememberMe" type="checkbox" />
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a href="@Url.Action(" ForgotPassword", "Account" )" class="forgot-link">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng nhập</button>
+            </form>
+
+            <div class="auth-footer">
+                Chưa là thành viên?
+                <a asp-controller="Account" asp-action="Register" class="register-link">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}
