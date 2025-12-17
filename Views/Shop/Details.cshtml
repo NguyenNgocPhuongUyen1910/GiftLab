@@ -321,10 +321,25 @@
             <span id="stockStatusText" class="stock-status-text"></span>
         </div>
 
-        <div class="action-buttons">
-            <button id="addToCartBtn" type="button" class="add-to-cart-btn">Thêm vào giỏ hàng</button>
-            <button id="buyNowBtn" type="button" class="buy-now-btn">Mua ngay</button>
-        </div>
+        <form method="post" action="/Cart/Add" class="action-buttons">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="productId" value="@Model.ProductInfo.Id" />
+            <input<input type="hidden" name="variantId" id="variantId"
+                         value="@(Model.DefaultVariantId > 0 ? Model.DefaultVariantId.ToString() : "")" />
+
+            <input type="hidden" name="quantity" id="cartQuantity" value="1" />
+
+            <button id="addToCartBtn" type="submit" class="add-to-cart-btn">
+                Thêm vào giỏ hàng
+            </button>
+
+            <button id="buyNowBtn" type="button" class="buy-now-btn" onclick="buyNow()">
+                Mua ngay
+            </button>
+        </form>
+
+
     </div>
 </div>
 
@@ -534,10 +549,11 @@
                 $('#stockStatusText').css('color', 'green');
                 $('#addToCartBtn, #buyNowBtn, #quantity').prop('disabled', false);
             }
-
+            
             // 3. Đánh dấu nút đã chọn
             $('.variant-btn').removeClass('selected');
             $(variantElement).addClass('selected');
+            $('#variantId').val($(variantElement).data('variant-id'));
         }
 
         // Xử lý khi click vào phân loại sản phẩm
@@ -554,21 +570,6 @@
             console.log('Trạng thái yêu thích: ' + isFavorite);
         });
 
-        // Xử lý button Thêm vào giỏ hàng
-        $('#addToCartBtn').on('click', function() {
-            var selectedVariantId = $('.variant-btn.selected').data('variant-id');
-            var quantity = parseInt($('#quantity').val());
-
-            if (!selectedVariantId || quantity < 1) {
-                alert('Vui lòng chọn phân loại và nhập số lượng hợp lệ.');
-                return;
-            }
-
-            // TODO: Gửi AJAX request lên Controller
-            console.log('Thêm vào giỏ hàng: Variant ID ' + selectedVariantId + ', Số lượng: ' + quantity);
-        });
-
-
         // Khởi tạo: Chọn biến thể mặc định khi tải trang
         var defaultVariantElement = $('.variant-btn[data-variant-id="' + defaultVariantId + '"]');
         if (defaultVariantElement.length > 0) {
@@ -577,22 +578,21 @@
     });
 
     // Hàm thay đổi số lượng (dùng cho onclick)
-    function changeQuantity(change) {
+       function changeQuantity(change) {
         var quantityInput = $('#quantity');
-        var current = parseInt(quantityInput.val());
-        var max = parseInt(quantityInput.attr('max'));
-        var min = parseInt(quantityInput.attr('min'));
+        var current = parseInt(quantityInput.val()) || 1;
+        var max = parseInt(quantityInput.attr('max')) || 99;
+        var min = parseInt(quantityInput.attr('min')) || 1;
 
         var newQuantity = current + change;
 
-        if (newQuantity < min) {
-            newQuantity = min;
-        } else if (newQuantity > max) {
-            newQuantity = max;
-        }
+        if (newQuantity < min) newQuantity = min;
+        if (newQuantity > max) newQuantity = max;
 
         quantityInput.val(newQuantity);
+        $('#cartQuantity').val(newQuantity); // ✅ sync sang hidden input
     }
+
 
     // Chỉ cho phép nhập số (dùng cho onkeypress)
     function isNumberKey(evt) {
@@ -619,4 +619,5 @@
 
     // Khởi tạo: Đảm bảo tab Mô Tả luôn được hiển thị mặc định
     $('#description-content').addClass('active');
+   
 </script>

@@ -41,7 +41,9 @@
             <div class="gl-main-icons gl-main-icons-right">
                 <a href="#"><img src="~/images/search-icon.png" class="gl-icon" alt="Tìm kiếm" /></a>
                 <a href="#"><img src="~/images/wishlist-icon.png" class="gl-icon" alt="Yêu thích" /></a>
-                <a href="#"><img src="~/images/cart-icon.png" class="gl-icon" alt="Giỏ hàng" /></a>
+                <a asp-controller="Cart" asp-action="Index">
+                    <img src="~/images/cart-icon.png" class="gl-icon" alt="Giỏ hàng" />
+                </a>
                 <a asp-controller="Account" asp-action="Login">
                     <img src="~/images/user-icon.png" class="gl-icon" alt="Tài khoản" />
                 </a>
